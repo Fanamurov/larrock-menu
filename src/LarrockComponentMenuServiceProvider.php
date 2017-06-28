@@ -32,7 +32,7 @@ class LarrockComponentMenuServiceProvider extends ServiceProvider
         $this->app['router']->aliasMiddleware('AddMenuFront', AddMenuFront::class);
         $this->app->make(MenuComponent::class);
 
-        if ( !class_exists('CreateLarrockBlocksTable')){
+        if ( !class_exists('CreateMenuTable')){
             // Publish the migration
             $timestamp = date('Y_m_d_His', time());
 
