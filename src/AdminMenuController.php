@@ -18,13 +18,13 @@ use View;
 
 class AdminMenuController extends Controller
 {
-	/**
-	 * @var mixed	Конфиг компонента
-	 */
-	protected $config;
+    /**
+     * @var mixed   Конфиг компонента
+     */
+    protected $config;
 
-	public function __construct()
-	{
+    public function __construct()
+    {
         $Component = new MenuComponent();
         $this->config = $Component->shareConfig();
 
@@ -32,35 +32,37 @@ class AdminMenuController extends Controller
         Breadcrumbs::register('admin.'. $this->config->name .'.index', function($breadcrumbs){
             $breadcrumbs->push($this->config->title, '/admin/menu');
         });
-	}
-
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @param Tree                        $tree
-	 *
-	 * @return View
-	 */
-	public function index(Tree $tree)
-	{
-		$data['types_menu'] = Menu::groupBy('type')->get(['type']);
-		$data['data'] = [];
-		foreach($data['types_menu'] as $type){
-			$data['data'][$type->type] = $tree->build_tree(Menu::orderBy('position', 'DESC')->whereType($type->type)->get());
-		}
-
-		//Строим меню из пунктов каталога
-		$data['catalog'] = $tree->build_tree(Category::whereComponent('catalog')->get());
-
-		return view('larrock::admin.menu.index', $data);
     }
 
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return \Illuminate\Http\RedirectResponse
+    /**
+     * Display a listing of the resource.
+     *
+     * @param Tree                        $tree
+     *
+     * @return View
      */
-	public function create()
+    public function index(Tree $tree)
+    {
+        $data['types_menu'] = Menu::groupBy('type')->get(['type']);
+        $data['data'] = [];
+        foreach($data['types_menu'] as $type){
+            $data['data'][$type->type] = $tree->build_tree(Menu::orderBy('position', 'DESC')->whereType($type->type)->get());
+        }
+
+        if(file_exists(base_path(). '/vendor/fanamurov/larrock-catalog')) {
+            //Строим меню из пунктов каталога
+            $data['catalog'] = $tree->build_tree(Category::whereComponent('catalog')->get());
+        }
+
+        return view('larrock::admin.menu.index', $data);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function create()
     {
         $test = Request::create('/admin/menu', 'POST', [
             'title' => 'Новый материал',
@@ -76,8 +78,8 @@ class AdminMenuController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      *
-	 * @return \Illuminate\Http\RedirectResponse
-	 */
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), $this->config->valid);
@@ -91,16 +93,16 @@ class AdminMenuController extends Controller
         $data->position = $request->input('position', 0);
         $data->type = $request->input('type', 'default');
 
-		if($request->get('parent') === ''){
-			$data->parent = NULL;
-		}
+        if($request->get('parent') === ''){
+            $data->parent = NULL;
+        }
 
         if($data->save()){
             Alert::add('successAdmin', 'Пункт меню '. $request->input('title') .' добавлен')->flash();
         }else{
-			Alert::add('errorAdmin', 'Пункт меню '. $request->input('title') .' не добавлен')->flash();
-		}
-		return back()->withInput();
+            Alert::add('errorAdmin', 'Пункт меню '. $request->input('title') .' не добавлен')->flash();
+        }
+        return back()->withInput();
     }
 
     /**
@@ -108,8 +110,8 @@ class AdminMenuController extends Controller
      *
      * @param  int  $id
      *
-	 * @return View
-	 */
+     * @return View
+     */
     public function edit($id)
     {
         $data['data'] = Menu::findOrFail($id);
@@ -134,7 +136,7 @@ class AdminMenuController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      *
-	 * @return \Illuminate\Http\RedirectResponse|Redirect
+     * @return \Illuminate\Http\RedirectResponse|Redirect
      */
     public function update(Request $request, $id)
     {
@@ -145,15 +147,15 @@ class AdminMenuController extends Controller
 
         $data = Menu::find($id);
 
-		$data->fill($request->all());
-		$data->active = $request->input('active', 1);
-		$data->position = $request->input('position', 0);
-		if($request->get('parent') === ''){
+        $data->fill($request->all());
+        $data->active = $request->input('active', 1);
+        $data->position = $request->input('position', 0);
+        if($request->get('parent') === ''){
             $data->parent = NULL;
-		}
+        }
 
         if($data->save()){
-			\Cache::flush();
+            \Cache::flush();
             Alert::add('successAdmin', 'Пункт меню '. $request->input('title') .' изменен')->flash();
         }else{
             Alert::add('errorAdmin', 'Пункт меню '. $request->input('title') .' не изменен')->flash();
@@ -166,8 +168,8 @@ class AdminMenuController extends Controller
      *
      * @param  int  $id
      *
-	 * @return \Illuminate\Http\RedirectResponse
-	 */
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function destroy($id)
     {
         if($data = Menu::find($id)){
