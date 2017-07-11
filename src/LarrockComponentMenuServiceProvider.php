@@ -14,6 +14,7 @@ class LarrockComponentMenuServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->loadRoutesFrom(__DIR__.'/routes.php');
         $this->loadViewsFrom(__DIR__.'/views', 'larrock');
 
         $this->publishes([
@@ -28,9 +29,9 @@ class LarrockComponentMenuServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        include __DIR__.'/routes.php';
-        $this->app['router']->aliasMiddleware('AddMenuFront', AddMenuFront::class);
         $this->app->make(MenuComponent::class);
+
+        $this->app['router']->aliasMiddleware('AddMenuFront', AddMenuFront::class);
 
         if ( !class_exists('CreateMenuTable')){
             // Publish the migration
