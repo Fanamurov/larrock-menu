@@ -37,28 +37,4 @@
             </div>
         @endforeach
     @endif
-
-    @if(isset($catalog))
-        <p class="uk-h1">Меню из разделов каталога</p>
-        <p class="uk-alert uk-alert-warning">Это алиасы от разделов каталога. Активность элементов управляется только через управление самим разделом</p>
-        <div class="uk-margin-large-bottom">
-            <table class="uk-table uk-table-striped uk-form">
-                <thead>
-                <tr>
-                    <th>Название пункта</th>
-                    <th>Название раздела</th>
-                    @include('larrock::admin.admin-builder.additional-rows-th')
-                </tr>
-                </thead>
-                <tbody>
-                @foreach($catalog as $type_menu)
-                    @include('larrock::admin.menu.item-catalog', ['data' => $type_menu])
-                @endforeach
-                </tbody>
-            </table>
-            @if(count($catalog) === 0)
-                <div class="uk-alert uk-alert-warning">Данных еще нет</div>
-            @endif
-        </div>
-    @endif
 @endsection

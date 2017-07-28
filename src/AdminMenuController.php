@@ -49,11 +49,6 @@ class AdminMenuController extends Controller
             $data['data'][$type->type] = $tree->build_tree(Menu::orderBy('position', 'DESC')->whereType($type->type)->get());
         }
 
-        if(file_exists(base_path(). '/vendor/fanamurov/larrock-catalog')) {
-            //Строим меню из пунктов каталога
-            $data['catalog'] = $tree->build_tree(Category::whereComponent('catalog')->get());
-        }
-
         return view('larrock::admin.menu.index', $data);
     }
 
