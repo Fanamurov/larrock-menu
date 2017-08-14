@@ -2,6 +2,7 @@
 
 namespace Larrock\ComponentMenu;
 
+use Larrock\ComponentMenu\Facades\LarrockMenu;
 use Larrock\ComponentMenu\Models\Menu;
 use Larrock\Core\Component;
 use Larrock\Core\Helpers\FormBuilder\FormInput;
@@ -14,6 +15,7 @@ class MenuComponent extends Component
         $this->name = $this->table = 'menu';
         $this->title = 'Меню';
         $this->description = 'Навигация по сайту';
+        $this->model = \config('larrock.models.menu', Menu::class);
         $this->addRows()->addPositionAndActive();
     }
 
@@ -24,11 +26,11 @@ class MenuComponent extends Component
 
         $row = new FormSelect('type', 'Тип меню');
         $this->rows['type'] = $row->setValid('required')
-            ->setConnect(Menu::class)
+            ->setConnect($this->model)
             ->setInTableAdmin()->setDefaultValue('default');
 
         $row = new FormSelect('parent', 'Родитель');
-        $this->rows['parent'] = $row->setConnect(Menu::class)->setOptionsTitle('title')->setDefaultValue('');
+        $this->rows['parent'] = $row->setConnect($this->model)->setOptionsTitle('title')->setDefaultValue('');
 
         $row = new FormInput('connect', 'Связь');
         $this->rows['connect'] = $row;
@@ -41,9 +43,9 @@ class MenuComponent extends Component
 
     public function renderAdminMenu()
     {
-        $count = \Cache::remember('count-data-admin-'. $this->name, 1440, function(){
-            return Menu::count(['id']);
+        $count = \Cache::remember('count-data-admin-'. LarrockMenu::getName(), 1440, function(){
+            return LarrockMenu::getModel()->count(['id']);
         });
-        return view('larrock::admin.sectionmenu.types.default', ['count' => $count, 'app' => $this, 'url' => '/admin/'. $this->name]);
+        return view('larrock::admin.sectionmenu.types.default', ['count' => $count, 'app' => LarrockMenu::getConfig(), 'url' => '/admin/'. LarrockMenu::getName()]);
     }
 }

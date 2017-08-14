@@ -9,44 +9,39 @@ use App\Http\Controllers\Controller;
 use JsValidator;
 use Alert;
 use Larrock\ComponentCategory\Models\Category;
+use Larrock\ComponentMenu\Facades\LarrockMenu;
 use Larrock\ComponentMenu\Models\Menu;
+use Larrock\Core\AdminController;
 use Larrock\Core\Component;
 use Larrock\Core\Helpers\Tree;
 use Validator;
 use Redirect;
 use View;
 
-class AdminMenuController extends Controller
+class AdminMenuController extends AdminController
 {
-    /**
-     * @var mixed   Конфиг компонента
-     */
-    protected $config;
-
     public function __construct()
     {
-        $Component = new MenuComponent();
-        $this->config = $Component->shareConfig();
+        $this->config = LarrockMenu::shareConfig();
 
         Breadcrumbs::setView('larrock::admin.breadcrumb.breadcrumb');
-        Breadcrumbs::register('admin.'. $this->config->name .'.index', function($breadcrumbs){
-            $breadcrumbs->push($this->config->title, '/admin/menu');
+        Breadcrumbs::register('admin.'. LarrockMenu::getName() .'.index', function($breadcrumbs){
+            $breadcrumbs->push(LarrockMenu::getTitle(), '/admin/'. LarrockMenu::getName());
         });
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @param Tree                        $tree
-     *
      * @return View
      */
-    public function index(Tree $tree)
+    public function index()
     {
-        $data['types_menu'] = Menu::groupBy('type')->get(['type']);
+        $tree = new Tree();
+        $data['types_menu'] = LarrockMenu::getModel()->groupBy('type')->get(['type']);
         $data['data'] = [];
         foreach($data['types_menu'] as $type){
-            $data['data'][$type->type] = $tree->build_tree(Menu::orderBy('position', 'DESC')->whereType($type->type)->get());
+            $data['data'][$type->type] = $tree->build_tree(LarrockMenu::getModel()->orderBy('position', 'DESC')->whereType($type->type)->get());
         }
 
         return view('larrock::admin.menu.index', $data);
@@ -57,7 +52,7 @@ class AdminMenuController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function create()
+    public function create(Request $request)
     {
         $test = Request::create('/admin/menu', 'POST', [
             'title' => 'Новый материал',
@@ -82,8 +77,7 @@ class AdminMenuController extends Controller
             return back()->withInput($request->except('password'))->withErrors($validator);
         }
 
-        $data = new Menu();
-        $data->fill($request->all());
+        $data = LarrockMenu::getModel()->fill($request->all());
         $data->active = $request->input('active', 1);
         $data->position = $request->input('position', 0);
         $data->type = $request->input('type', 'default');
@@ -109,15 +103,15 @@ class AdminMenuController extends Controller
      */
     public function edit($id)
     {
-        $data['data'] = Menu::findOrFail($id);
-        $data['app'] = $this->config->tabbable($data['data']);
+        $data['data'] = LarrockMenu::getModel()->findOrFail($id);
+        $data['app'] = LarrockMenu::tabbable($data['data']);
 
-        $validator = JsValidator::make(Component::_valid_construct($this->config, 'update', $id));
+        $validator = JsValidator::make(Component::_valid_construct(LarrockMenu::getConfig(), 'update', $id));
         View::share('validator', $validator);
 
         Breadcrumbs::register('admin.menu.edit', function($breadcrumbs, $data)
         {
-            $breadcrumbs->parent('admin.'. $this->config->name .'.index');
+            $breadcrumbs->parent('admin.'. LarrockMenu::getName() .'.index');
             $breadcrumbs->push($data->type, '/admin/menu#type-'. $data->type);
             $breadcrumbs->push($data->title);
         });
@@ -135,12 +129,12 @@ class AdminMenuController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), Component::_valid_construct($this->config, 'update', $id));
+        $validator = Validator::make($request->all(), Component::_valid_construct(LarrockMenu::getConfig(), 'update', $id));
         if($validator->fails()){
             return back()->withInput($request->except('password'))->withErrors($validator);
         }
 
-        $data = Menu::find($id);
+        $data = LarrockMenu::getModel()->find($id);
 
         $data->fill($request->all());
         $data->active = $request->input('active', 1);
@@ -156,32 +150,5 @@ class AdminMenuController extends Controller
             Alert::add('errorAdmin', 'Пункт меню '. $request->input('title') .' не изменен')->flash();
         }
         return back()->withInput();
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function destroy($id)
-    {
-        if($data = Menu::find($id)){
-            $name = $data->title;
-            $Component = new MenuComponent();
-            $Component->removeDataPlugins($this->config);
-
-            if($data->delete()){
-                \Cache::flush();
-                Alert::add('successAdmin', 'Пункт меню '. $name .' успешно удален')->flash();
-            }else{
-                Alert::add('errorAdmin', 'Пункт меню '. $name .' не удален')->flash();
-            }
-        }else{
-            Alert::add('errorAdmin', 'Такого пункта больше нет')->flash();
-        }
-
-        return Redirect::to('/admin/'. $this->config->name);
     }
 }

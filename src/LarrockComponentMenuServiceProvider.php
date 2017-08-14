@@ -29,7 +29,10 @@ class LarrockComponentMenuServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->make(MenuComponent::class);
+        $this->app->singleton('larrockmenu', function() {
+            $class = config('larrock.components.menu', MenuComponent::class);
+            return new $class;
+        });
 
         $this->app['router']->aliasMiddleware('AddMenuFront', AddMenuFront::class);
 

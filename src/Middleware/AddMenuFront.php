@@ -2,6 +2,8 @@
 
 namespace Larrock\ComponentMenu\Middleware;
 
+use Larrock\ComponentMenu\Facades\LarrockMenu;
+use Larrock\ComponentMenu\MenuComponent;
 use Larrock\ComponentMenu\Models\Menu;
 use Cache;
 use Closure;
@@ -19,9 +21,16 @@ class AddMenuFront
     public function handle($request, Closure $next)
     {
         $menu = Cache::remember('menu_front', 1440, function() {
-            return Menu::whereActive(1)->orderBy('position', 'DESC')->get();
+            $get_types = LarrockMenu::getModel()->whereActive(1)->groupBy('type')->get();
+            $menu = [];
+            foreach ($get_types as $type){
+                $menu[$type->type] = LarrockMenu::getModel()->whereActive(1)->whereType($type->type)->get();
+            }
+            return $menu;
         });
-        View::share('menu', $menu);
+        foreach ($menu as $key => $type){
+            View::share('menu_'. $key, $type);
+        }
 
         return $next($request);
     }
