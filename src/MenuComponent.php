@@ -28,7 +28,7 @@ class MenuComponent extends Component
             ->setInTableAdmin()->setDefaultValue('default');
 
         $row = new FormSelect('parent', 'Родитель');
-        $this->rows['parent'] = $row->setConnect(Menu::class)->setOptionsTitle('title');
+        $this->rows['parent'] = $row->setConnect(Menu::class)->setOptionsTitle('title')->setDefaultValue('');
 
         $row = new FormInput('connect', 'Связь');
         $this->rows['connect'] = $row;

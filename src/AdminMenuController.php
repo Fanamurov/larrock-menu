@@ -97,7 +97,7 @@ class AdminMenuController extends Controller
         }else{
             Alert::add('errorAdmin', 'Пункт меню '. $request->input('title') .' не добавлен')->flash();
         }
-        return back()->withInput();
+        return redirect()->to('/admin/menu/'. $data->id .'/edit');
     }
 
     /**
