@@ -28,7 +28,34 @@ class AddMenuFront
             }
             return $menu;
         });
+
+        $current_url = parse_url(\URL::current());
+        if( !array_key_exists('path', $current_url)){
+            $current_url['path'] = 'undefined';
+        }
+
         foreach ($menu as $key => $type){
+            $current_selected_key = NULL;
+            $current_selected_url = NULL;
+            foreach ($type as $key_item => $item){
+                if('/'. \Route::current()->uri() === $item->url ||
+                    \Route::current()->getActionName() === $item->connect ||
+                    starts_with($current_url['path'], $item->connect) ||
+                    starts_with($current_url['path'], $item->url)){
+                    if($current_selected_key){
+                        if($current_selected_url < $item->url){
+                            $current_selected_key = $key_item;
+                            $current_selected_url = $item->url;
+                        }
+                    }else{
+                        $current_selected_key = $key_item;
+                        $current_selected_url = $item->url;
+                    }
+                }
+                if($current_selected_key){
+                    $type[$current_selected_key]->selected = TRUE;
+                }
+            }
             View::share('menu_'. $key, $type);
         }
 

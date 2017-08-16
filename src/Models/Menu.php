@@ -3,6 +3,7 @@
 namespace Larrock\ComponentMenu\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Larrock\ComponentMenu\Facades\LarrockMenu;
 
 /**
  * App\Models\Menu
@@ -34,7 +35,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Menu extends Model
 {
-    protected $table = 'menu';
-
-    protected $fillable = ['title', 'type', 'parent', 'url', 'connect', 'position', 'active'];
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->fillable(LarrockMenu::addFillableUserRows(['title', 'type', 'parent', 'url', 'connect', 'position', 'active']));
+        $this->table = LarrockMenu::getConfig()->table;
+    }
 }
