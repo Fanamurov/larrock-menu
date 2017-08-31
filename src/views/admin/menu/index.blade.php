@@ -11,6 +11,9 @@
     </div>
 
     @if(isset($data))
+        @if(count($data) === 0)
+            <div class="uk-alert uk-alert-warning">Данных еще нет</div>
+        @endif
         @foreach($data as $key => $type)
             <p class="uk-h1" id="type-{{ $key }}">{{ $key }}</p>
             <div class="uk-margin-large-bottom">
@@ -31,10 +34,9 @@
                     @endforeach
                     </tbody>
                 </table>
-                @if(count($data) === 0)
-                    <div class="uk-alert uk-alert-warning">Данных еще нет</div>
-                @endif
             </div>
         @endforeach
+    @else
+        <div class="uk-alert uk-alert-warning">Данных еще нет</div>
     @endif
 @endsection
