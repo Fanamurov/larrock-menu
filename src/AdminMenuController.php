@@ -24,7 +24,7 @@ class AdminMenuController extends AdminController
     {
         $this->config = LarrockMenu::shareConfig();
 
-        Breadcrumbs::setView('larrock::admin.breadcrumb.breadcrumb');
+        \Config::set('breadcrumbs.view', 'larrock::admin.breadcrumb.breadcrumb');
         Breadcrumbs::register('admin.'. LarrockMenu::getName() .'.index', function($breadcrumbs){
             $breadcrumbs->push(LarrockMenu::getTitle(), '/admin/'. LarrockMenu::getName());
         });
