@@ -43,7 +43,7 @@ class AddMenuFront
                     \Route::current()->getActionName() === $item->connect ||
                     starts_with($current_url['path'], $item->connect) ||
                     starts_with($current_url['path'], $item->url)){
-                    if(strlen($item->url) >= strlen($current_url['path'])){
+                    if(strlen($item->url) >= strlen($current_url['path']) || strlen($current_url['path']) >= strlen($item->connect)){
                         if($current_selected_key){
                             if($current_selected_url <= $item->url){
                                 $current_selected_key = $key_item;
