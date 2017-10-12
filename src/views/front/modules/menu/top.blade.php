@@ -3,9 +3,22 @@
 <nav class="uk-navbar uk-hidden-small" id="{{ $menu->first()->type }}_menu_block">
     <ul class="uk-navbar-nav">
         @foreach($menu as $data_item)
-            <li @if($data_item->selected) class="uk-active" @endif>
-                <a href="{{ $data_item->url }}">{{ $data_item->title }}</a>
-            </li>
+            @if(count($data_item->get_childActive) > 0)
+                <li class="uk-parent @if($data_item->selected) uk-active @endif" data-uk-dropdown="{mode:'click'}">
+                    <a href="" onclick="return false">{{ $data_item->title }}</a>
+                    <div class="uk-dropdown uk-dropdown-navbar uk-dropdown-bottom">
+                        <ul class="uk-nav uk-nav-navbar">
+                            @foreach($data_item->get_childActive as $child)
+                                <li @if($data_item->selected) class="uk-active" @endif><a href="{{ $child->url }}">{{ $child->title }}</a></li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </li>
+            @else
+                <li @if($data_item->selected) class="uk-active" @endif>
+                    <a href="{{ $data_item->url }}">{{ $data_item->title }}</a>
+                </li>
+            @endif
         @endforeach
     </ul>
 </nav>

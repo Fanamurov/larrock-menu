@@ -104,7 +104,33 @@ class AdminMenuController extends AdminController
     public function edit($id)
     {
         $data['data'] = LarrockMenu::getModel()->findOrFail($id);
-        $data['app'] = LarrockMenu::tabbable($data['data']);
+
+        //Добавляем поле поиска материалов
+        $data['search'] = [];
+        $components = config('larrock-admin-search');
+        if(isset($components['components'])){
+            foreach ($components['components'] as $item){
+                if($item->searchable){
+                    if(isset($item->rows['active'])){
+                        $search_data = $item->model::whereActive(1)->get();
+                    }else{
+                        $search_data = $item->model::all();
+                    }
+                    foreach ($search_data as $value){
+                        if($value->url && $value->title){
+                            $data['search'][$value->url] = $value->title .'/'. $item->model;
+                        }
+                    }
+                }
+            }
+        }
+
+        $rows = LarrockMenu::getRows();
+        $row['search_autocomplite_menu'] = new FormSelect('search_autocomplite_menu', 'Прикрепить к материалу');
+        $row['search_autocomplite_menu']->setOptions($data['search'])->setHelp('При указании материала проставлять url вручную не нужно');
+        $rows = $row + $rows;
+
+        $data['app'] = LarrockMenu::overrideComponent('rows', $rows)->tabbable($data['data']);
 
         $validator = JsValidator::make(Component::_valid_construct(LarrockMenu::getConfig(), 'update', $id));
         View::share('validator', $validator);
@@ -141,6 +167,13 @@ class AdminMenuController extends AdminController
         $data->position = $request->input('position', 0);
         if($request->get('parent') === ''){
             $data->parent = NULL;
+        }
+        if($request->get('search_autocomplite_menu')){
+            $search = explode('/', $request->get('search_autocomplite_menu'));
+            $model = new $search[1];
+            $material = $model->whereTitle($search[0])->first();
+            $data->url = $material->full_url;
+            $data->connect = $material->full_url;
         }
 
         if($data->save()){

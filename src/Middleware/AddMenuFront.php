@@ -24,7 +24,8 @@ class AddMenuFront
             $get_types = LarrockMenu::getModel()->whereActive(1)->groupBy('type')->get();
             $menu = [];
             foreach ($get_types as $type){
-                $menu[$type->type] = LarrockMenu::getModel()->whereActive(1)->whereType($type->type)->orderBy('position', 'DESC')->get();
+                $menu[$type->type] = LarrockMenu::getModel()->whereActive(1)->whereType($type->type)
+                    ->whereParent(NULL)->with(['get_childActive'])->orderBy('position', 'DESC')->get();
             }
             return $menu;
         });

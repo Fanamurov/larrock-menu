@@ -41,4 +41,43 @@ class Menu extends Model
         $this->fillable(LarrockMenu::addFillableUserRows(['title', 'type', 'parent', 'url', 'connect', 'position', 'active']));
         $this->table = LarrockMenu::getConfig()->table;
     }
+
+    public function get_child()
+    {
+        return $this->hasMany(LarrockMenu::getModelName(), 'parent', 'id')->orderBy('position', 'DESC');
+    }
+
+    public function get_childActive()
+    {
+        return $this->hasMany(LarrockMenu::getModelName(), 'parent', 'id')->whereActive(1)->orderBy('position', 'DESC');
+    }
+
+    public function getParentTreeAttribute()
+    {
+        $key = 'tree_menu'. $this->id;
+        $list = \Cache::remember($key, 1440, function() {
+            $list[] = $this;
+            return $this->iterate_tree($this, $list);
+        });
+        return $list;
+    }
+
+    protected function iterate_tree($category, $list = [])
+    {
+        if($get_data = $category->get_parent()->first()){
+            $list[] = $get_data;
+            return $this->iterate_tree($get_data, $list);
+        }
+        return array_reverse($list);
+    }
+
+    public function get_parent()
+    {
+        return $this->hasOne(LarrockMenu::getModelName(), 'id', 'parent');
+    }
+
+    public function get_parentActive()
+    {
+        return $this->hasOne(LarrockMenu::getModelName(), 'id', 'parent')->whereActive(1);
+    }
 }

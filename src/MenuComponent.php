@@ -7,6 +7,7 @@ use Larrock\ComponentMenu\Models\Menu;
 use Larrock\Core\Component;
 use Larrock\Core\Helpers\FormBuilder\FormInput;
 use Larrock\Core\Helpers\FormBuilder\FormSelect;
+use Larrock\Core\Helpers\FormBuilder\FormSelectKey;
 
 class MenuComponent extends Component
 {
@@ -25,15 +26,16 @@ class MenuComponent extends Component
         $this->rows['title'] = $row->setValid('max:255|required')->setTypo()->setInTableAdmin();
 
         $row = new FormSelect('type', 'Тип меню');
-        $this->rows['type'] = $row->setValid('required')
-            ->setConnect($this->model)
-            ->setInTableAdmin()->setDefaultValue('default');
+        $this->rows['type'] = $row->setValid('required')->setAllowCreate()
+            ->setConnect($this->model, NULL, 'type')
+            ->setInTableAdmin()->setDefaultValue('default')->setCssClassGroup('uk-width-1-1 uk-width-medium-1-3');
 
-        $row = new FormSelect('parent', 'Родитель');
-        $this->rows['parent'] = $row->setConnect($this->model)->setOptionsTitle('title')->setDefaultValue('');
+        $row = new FormSelectKey('parent', 'Родитель');
+        $this->rows['parent'] = $row->setConnect($this->model)->setOptionsTitle('title')->setOptionsKey('id')
+            ->setDefaultValue('')->setCssClassGroup('uk-width-1-1 uk-width-medium-1-3');
 
         $row = new FormInput('connect', 'Связь');
-        $this->rows['connect'] = $row;
+        $this->rows['connect'] = $row->setCssClassGroup('uk-width-1-1 uk-width-medium-1-3');
 
         $row = new FormInput('url', 'URL');
         $this->rows['url'] = $row->setValid('max:255|required');
