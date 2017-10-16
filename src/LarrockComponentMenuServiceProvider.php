@@ -16,6 +16,7 @@ class LarrockComponentMenuServiceProvider extends ServiceProvider
     {
         $this->loadRoutesFrom(__DIR__.'/routes.php');
         $this->loadViewsFrom(__DIR__.'/views', 'larrock');
+        $this->loadMigrationsFrom(__DIR__.'/database/migrations');
 
         $this->publishes([
             __DIR__.'/views' => base_path('resources/views/vendor/larrock')
@@ -35,14 +36,5 @@ class LarrockComponentMenuServiceProvider extends ServiceProvider
         });
 
         $this->app['router']->aliasMiddleware('AddMenuFront', AddMenuFront::class);
-
-        if ( !class_exists('CreateMenuTable')){
-            // Publish the migration
-            $timestamp = date('Y_m_d_His', time());
-
-            $this->publishes([
-                __DIR__.'/database/migrations/0000_00_00_000000_create_menu_table.php' => database_path('migrations/'.$timestamp.'_create_menu_table.php')
-            ], 'migrations');
-        }
     }
 }
