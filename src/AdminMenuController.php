@@ -4,16 +4,13 @@ namespace Larrock\ComponentMenu;
 
 use Breadcrumbs;
 use Illuminate\Http\Request;
-
-use App\Http\Controllers\Controller;
 use JsValidator;
-use Alert;
-use Larrock\ComponentCategory\Models\Category;
 use Larrock\ComponentMenu\Facades\LarrockMenu;
-use Larrock\ComponentMenu\Models\Menu;
 use Larrock\Core\AdminController;
 use Larrock\Core\Component;
+use Larrock\Core\Helpers\FormBuilder\FormSelect;
 use Larrock\Core\Helpers\Tree;
+use Session;
 use Validator;
 use Redirect;
 use View;
@@ -87,9 +84,9 @@ class AdminMenuController extends AdminController
         }
 
         if($data->save()){
-            Alert::add('successAdmin', 'Пункт меню '. $request->input('title') .' добавлен')->flash();
+            Session::push('message.success', 'Пункт меню '. $request->input('title') .' добавлен');
         }else{
-            Alert::add('errorAdmin', 'Пункт меню '. $request->input('title') .' не добавлен')->flash();
+            Session::push('message.danger', 'Пункт меню '. $request->input('title') .' не добавлен');
         }
         return redirect()->to('/admin/menu/'. $data->id .'/edit');
     }
@@ -173,14 +170,13 @@ class AdminMenuController extends AdminController
             $model = new $search[1];
             $material = $model->whereTitle($search[0])->first();
             $data->url = $material->full_url;
-            $data->connect = $material->full_url;
         }
 
         if($data->save()){
             \Cache::flush();
-            Alert::add('successAdmin', 'Пункт меню '. $request->input('title') .' изменен')->flash();
+            Session::push('message.success', 'Пункт меню '. $request->input('title') .' изменен');
         }else{
-            Alert::add('errorAdmin', 'Пункт меню '. $request->input('title') .' не изменен')->flash();
+            Session::push('message.danger', 'Пункт меню '. $request->input('title') .' не изменен');
         }
         return back()->withInput();
     }

@@ -19,7 +19,6 @@ class CreateMenuTable extends Migration {
 			$table->char('type')->default('default');
 			$table->integer('parent')->nullable()->default(0);
 			$table->char('url')->default('');
-			$table->char('connect')->default('');
 			$table->integer('position')->default(0);
 			$table->integer('active')->default(1);
 			$table->timestamps();

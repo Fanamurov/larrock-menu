@@ -34,9 +34,6 @@ class MenuComponent extends Component
         $this->rows['parent'] = $row->setConnect($this->model)->setOptionsTitle('title')->setOptionsKey('id')
             ->setDefaultValue('')->setCssClassGroup('uk-width-1-1 uk-width-medium-1-3');
 
-        $row = new FormInput('connect', 'Связь');
-        $this->rows['connect'] = $row->setCssClassGroup('uk-width-1-1 uk-width-medium-1-3');
-
         $row = new FormInput('url', 'URL');
         $this->rows['url'] = $row->setValid('max:255|required');
 
