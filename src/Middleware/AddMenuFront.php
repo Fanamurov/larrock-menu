@@ -35,63 +35,51 @@ class AddMenuFront
             $current_url['path'] = '/';
         }
 
+        $parse_url = parse_url(\URL::current());
+        $explode_url = explode('/', array_get($parse_url, 'path'));
+
+        $inter = [];
+
         foreach ($menu as $key_menu => $type){
             $selected_key = NULL;
             $selected_diff = NULL;
             foreach ($type as $key_item => $item){
-                $parse_url = parse_url(\URL::current());
-                $explode_url = explode('/', array_get($parse_url, 'path'));
-
                 $parse_url_item = parse_url($item->url);
                 $explode_url_item = explode('/', array_get($parse_url_item, 'path'));
 
-                $diff = array_diff($explode_url_item, $explode_url);
-                if(count($diff) === 0){
-                    if( !$selected_key){
-                        $selected_key = $key_item;
-                        $selected_diff = count($explode_url) - count($explode_url_item);
-                    }else{
-                        if($selected_key <= (count($explode_url) - count($explode_url_item))){
-                            $selected_key = $key_item;
-                            $selected_diff = count($explode_url) - count($explode_url_item);
-                        }
-                    }
+                if(count($explode_url) >= count($explode_url_item)){
+                    $inter[$key_item] = array_intersect_assoc($explode_url, $explode_url_item);
                 }
             }
 
-            if($selected_key){
-                $type[$selected_key]->selected = TRUE;
-            }
+            if(count($inter) > 0){
+                $selected_key = array_search(max($inter),$inter);
+                if(isset($menu[$key_menu][$selected_key])){
+                    $menu[$key_menu][$selected_key]->selected = TRUE;
 
-            $selected_key_child = NULL;
-            $selected_diff_child = NULL;
-            if($type[$selected_key]->get_childActive){
-                foreach ($type[$selected_key]->get_childActive as $child_key => $child){
-                    $parse_url_child = parse_url($child->url);
-                    $explode_url_child = explode('/', array_get($parse_url_child, 'path'));
+                    //Выбираем активный пункт в выпадающем меню
+                    if($type[$selected_key]->get_childActive){
+                        $inter_child = [];
+                        foreach ($type[$selected_key]->get_childActive as $child_key => $child){
+                            $parse_url_child = parse_url($child->url);
+                            $explode_url_child = explode('/', array_get($parse_url_child, 'path'));
 
-                    $diff = array_diff($explode_url_child, $explode_url);
-                    if(count($diff) === 0){
-                        if( !$selected_key_child){
-                            $selected_key_child = $child_key;
-                            $selected_diff_child = count($explode_url) - count($explode_url_child);
-                        }else{
-                            if($selected_key_child <= (count($explode_url) - count($explode_url_child))){
-                                $selected_key_child = $child_key;
-                                $selected_diff_child = count($explode_url) - count($explode_url_child);
+                            if(count($explode_url) >= count($explode_url_child)){
+                                $inter_child[$child_key] = array_intersect_assoc($explode_url, $explode_url_child);
+                            }
+                        }
+
+                        if(count($inter_child) > 0){
+                            $selected_key_child = array_search(max($inter_child),$inter_child);
+                            if(array_key_exists($selected_key_child, $type[$selected_key]->get_childActive)) {
+                                $menu[$key_menu][$selected_key]->get_childActive[$selected_key_child]->selected = TRUE;
                             }
                         }
                     }
                 }
             }
-
-            if($selected_key_child){
-                $type[$selected_key]->get_childActive[$selected_key_child]->selected = TRUE;
-            }
-
             View::share('menu_'. $key_menu, $type);
         }
-
         return $next($request);
     }
 }
