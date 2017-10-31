@@ -47,9 +47,9 @@ class Menu extends Model
         return $this->hasMany(LarrockMenu::getModelName(), 'parent', 'id')->orderBy('position', 'DESC');
     }
 
-    public function get_childActive()
+    public function scopeActive($query)
     {
-        return $this->hasMany(LarrockMenu::getModelName(), 'parent', 'id')->whereActive(1)->orderBy('position', 'DESC');
+        return $query->where('active', 1);
     }
 
     public function getParentTreeAttribute()
@@ -74,10 +74,5 @@ class Menu extends Model
     public function get_parent()
     {
         return $this->hasOne(LarrockMenu::getModelName(), 'id', 'parent');
-    }
-
-    public function get_parentActive()
-    {
-        return $this->hasOne(LarrockMenu::getModelName(), 'id', 'parent')->whereActive(1);
     }
 }
