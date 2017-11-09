@@ -4,19 +4,24 @@ namespace Larrock\ComponentMenu;
 
 use Breadcrumbs;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use JsValidator;
 use Larrock\ComponentMenu\Facades\LarrockMenu;
-use Larrock\Core\AdminController;
 use Larrock\Core\Component;
 use Larrock\Core\Helpers\FormBuilder\FormSelect;
 use Larrock\Core\Helpers\Tree;
+use Larrock\Core\Traits\AdminMethodsCreate;
+use Larrock\Core\Traits\AdminMethodsDestroy;
+use Larrock\Core\Traits\AdminMethodsStore;
 use Session;
 use Validator;
 use Redirect;
 use View;
 
-class AdminMenuController extends AdminController
+class AdminMenuController extends Controller
 {
+    use AdminMethodsCreate, AdminMethodsStore, AdminMethodsDestroy;
+
     public function __construct()
     {
         $this->config = LarrockMenu::shareConfig();
@@ -42,53 +47,6 @@ class AdminMenuController extends AdminController
         }
 
         return view('larrock::admin.menu.index', $data);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function create(Request $request)
-    {
-        $test = Request::create('/admin/menu', 'POST', [
-            'title' => 'Новый материал',
-            'url' => str_slug('novyy-material'),
-            'active' => 0,
-            'type' => 'default'
-        ]);
-        return $this->store($test);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), $this->config->valid);
-        if($validator->fails()){
-            return back()->withInput($request->except('password'))->withErrors($validator);
-        }
-
-        $data = LarrockMenu::getModel()->fill($request->all());
-        $data->active = $request->input('active', 1);
-        $data->position = $request->input('position', 0);
-        $data->type = $request->input('type', 'default');
-
-        if($request->get('parent') === ''){
-            $data->parent = NULL;
-        }
-
-        if($data->save()){
-            Session::push('message.success', 'Пункт меню '. $request->input('title') .' добавлен');
-        }else{
-            Session::push('message.danger', 'Пункт меню '. $request->input('title') .' не добавлен');
-        }
-        return redirect()->to('/admin/menu/'. $data->id .'/edit');
     }
 
     /**
@@ -169,6 +127,7 @@ class AdminMenuController extends AdminController
             $search = explode('/', $request->get('search_autocomplite_menu'));
             $model = new $search[1];
             $material = $model->whereTitle($search[0])->first();
+            $data->title = $material->title;
             $data->url = $material->full_url;
         }
 
@@ -178,6 +137,6 @@ class AdminMenuController extends AdminController
         }else{
             Session::push('message.danger', 'Пункт меню '. $request->input('title') .' не изменен');
         }
-        return back()->withInput();
+        return back();
     }
 }
