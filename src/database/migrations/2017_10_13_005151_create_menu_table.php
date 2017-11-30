@@ -22,6 +22,8 @@ class CreateMenuTable extends Migration {
 			$table->integer('position')->default(0);
 			$table->integer('active')->default(1);
 			$table->timestamps();
+
+            $table->index(['type', 'active']);
 		});
 	}
 

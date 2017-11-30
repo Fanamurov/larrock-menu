@@ -23,19 +23,20 @@ class MenuComponent extends Component
     protected function addRows()
     {
         $row = new FormInput('title', 'Название пункта');
-        $this->rows['title'] = $row->setValid('max:255|required')->setTypo()->setInTableAdmin();
+        $this->rows['title'] = $row->setValid('max:255|required')->setTypo()->setInTableAdmin()->setFillable();
 
         $row = new FormSelect('type', 'Тип меню');
         $this->rows['type'] = $row->setValid('required')->setAllowCreate()
             ->setConnect($this->model, NULL, 'type')
-            ->setInTableAdmin()->setDefaultValue('default')->setCssClassGroup('uk-width-1-1 uk-width-medium-1-3');
+            ->setInTableAdmin()->setDefaultValue('default')
+            ->setCssClassGroup('uk-width-1-1 uk-width-medium-1-3')->setFillable();
 
         $row = new FormSelectKey('parent', 'Родитель');
         $this->rows['parent'] = $row->setConnect($this->model)->setOptionsTitle('title')->setOptionsKey('id')
-            ->setDefaultValue('')->setCssClassGroup('uk-width-1-1 uk-width-medium-1-3');
+            ->setDefaultValue('')->setCssClassGroup('uk-width-1-1 uk-width-medium-1-3')->setFillable();
 
         $row = new FormInput('url', 'URL');
-        $this->rows['url'] = $row->setValid('max:255|required');
+        $this->rows['url'] = $row->setValid('max:255|required')->setFillable();
 
         return $this;
     }

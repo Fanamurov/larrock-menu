@@ -4,9 +4,10 @@ namespace Larrock\ComponentMenu\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Larrock\ComponentMenu\Facades\LarrockMenu;
+use Larrock\Core\Traits\GetLink;
 
 /**
- * App\Models\Menu
+ * Larrock\ComponentMenu\Models\Menu
  *
  * @property integer $id
  * @property string $title
@@ -19,27 +20,30 @@ use Larrock\ComponentMenu\Facades\LarrockMenu;
  * @property integer $active
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Menu whereId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Menu whereTitle($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Menu whereCategory($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Menu whereType($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Menu whereParent($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Menu whereUrl($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Menu whereConnect($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Menu wherePosition($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Menu whereActive($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Menu whereCreatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Menu whereUpdatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Menu find($value)
+ * @method static \Illuminate\Database\Query\Builder|\Larrock\ComponentMenu\Models\Menu whereId($value)
+ * @method static \Illuminate\Database\Query\Builder|\Larrock\ComponentMenu\Models\Menu whereTitle($value)
+ * @method static \Illuminate\Database\Query\Builder|\Larrock\ComponentMenu\Models\Menu whereCategory($value)
+ * @method static \Illuminate\Database\Query\Builder|\Larrock\ComponentMenu\Models\Menu whereType($value)
+ * @method static \Illuminate\Database\Query\Builder|\Larrock\ComponentMenu\Models\Menu whereParent($value)
+ * @method static \Illuminate\Database\Query\Builder|\Larrock\ComponentMenu\Models\Menu whereUrl($value)
+ * @method static \Illuminate\Database\Query\Builder|\Larrock\ComponentMenu\Models\Menu whereConnect($value)
+ * @method static \Illuminate\Database\Query\Builder|\Larrock\ComponentMenu\Models\Menu wherePosition($value)
+ * @method static \Illuminate\Database\Query\Builder|\Larrock\ComponentMenu\Models\Menu whereActive($value)
+ * @method static \Illuminate\Database\Query\Builder|\Larrock\ComponentMenu\Models\Menu whereCreatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\Larrock\ComponentMenu\Models\Menu whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\Larrock\ComponentMenu\Models\Menu find($value)
  * @mixin \Eloquent
  */
 class Menu extends Model
 {
+    use GetLink;
+
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->fillable(LarrockMenu::addFillableUserRows(['title', 'type', 'parent', 'url', 'connect', 'position', 'active']));
+        $this->fillable(LarrockMenu::addFillableUserRows([]));
         $this->table = LarrockMenu::getConfig()->table;
+        $this->config = LarrockMenu::getConfig();
     }
 
     public function get_child()
