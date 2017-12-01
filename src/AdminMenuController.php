@@ -2,7 +2,6 @@
 
 namespace Larrock\ComponentMenu;
 
-use Breadcrumbs;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use JsValidator;
@@ -24,12 +23,9 @@ class AdminMenuController extends Controller
 
     public function __construct()
     {
+        $this->middleware(LarrockMenu::combineAdminMiddlewares());
         $this->config = LarrockMenu::shareConfig();
-
         \Config::set('breadcrumbs.view', 'larrock::admin.breadcrumb.breadcrumb');
-        Breadcrumbs::register('admin.'. LarrockMenu::getName() .'.index', function($breadcrumbs){
-            $breadcrumbs->push(LarrockMenu::getTitle(), '/admin/'. LarrockMenu::getName());
-        });
     }
 
     /**
@@ -53,7 +49,6 @@ class AdminMenuController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     *
      * @return View
      */
     public function edit($id)
@@ -90,13 +85,6 @@ class AdminMenuController extends Controller
         $validator = JsValidator::make(Component::_valid_construct(LarrockMenu::getConfig(), 'update', $id));
         View::share('validator', $validator);
 
-        Breadcrumbs::register('admin.menu.edit', function($breadcrumbs, $data)
-        {
-            $breadcrumbs->parent('admin.'. LarrockMenu::getName() .'.index');
-            $breadcrumbs->push($data->type, '/admin/menu#type-'. $data->type);
-            $breadcrumbs->push($data->title);
-        });
-
         return view('larrock::admin.admin-builder.edit', $data);
     }
 
@@ -105,7 +93,6 @@ class AdminMenuController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     *
      * @return \Illuminate\Http\RedirectResponse|Redirect
      */
     public function update(Request $request, $id)
