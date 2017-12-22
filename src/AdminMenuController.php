@@ -12,6 +12,7 @@ use Larrock\Core\Helpers\Tree;
 use Larrock\Core\Traits\AdminMethodsCreate;
 use Larrock\Core\Traits\AdminMethodsDestroy;
 use Larrock\Core\Traits\AdminMethodsStore;
+use Larrock\Core\Traits\ShareMethods;
 use Session;
 use Validator;
 use Redirect;
@@ -19,10 +20,11 @@ use View;
 
 class AdminMenuController extends Controller
 {
-    use AdminMethodsCreate, AdminMethodsStore, AdminMethodsDestroy;
+    use AdminMethodsCreate, AdminMethodsStore, AdminMethodsDestroy, ShareMethods;
 
     public function __construct()
     {
+        $this->shareMethods();
         $this->middleware(LarrockMenu::combineAdminMiddlewares());
         $this->config = LarrockMenu::shareConfig();
         \Config::set('breadcrumbs.view', 'larrock::admin.breadcrumb.breadcrumb');
