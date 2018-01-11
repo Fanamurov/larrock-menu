@@ -52,6 +52,11 @@ class Menu extends Model
         $this->config = LarrockMenu::getConfig();
     }
 
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
     public function get_child()
     {
         return $this->hasMany(LarrockMenu::getModelName(), 'parent', 'id')->orderBy('position', 'DESC');
