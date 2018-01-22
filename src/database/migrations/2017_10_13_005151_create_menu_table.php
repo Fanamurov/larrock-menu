@@ -17,7 +17,7 @@ class CreateMenuTable extends Migration {
 			$table->increments('id');
 			$table->char('title');
 			$table->char('type')->default('default');
-			$table->integer('parent')->nullable()->default(0);
+			$table->integer('parent')->nullable();
 			$table->char('url', 191)->default('');
 			$table->integer('position')->default(0);
 			$table->integer('active')->default(1);
