@@ -32,7 +32,6 @@ class AdminMenuController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
      * @return View
      */
     public function index()
@@ -43,13 +42,11 @@ class AdminMenuController extends Controller
         foreach($data['types_menu'] as $type){
             $data['data'][$type->type] = $tree->build_tree(LarrockMenu::getModel()->orderBy('position', 'DESC')->whereType($type->type)->get());
         }
-
         return view('larrock::admin.menu.index', $data);
     }
 
     /**
      * Show the form for editing the specified resource.
-     *
      * @param  int  $id
      * @return View
      */
@@ -86,13 +83,11 @@ class AdminMenuController extends Controller
 
         $validator = JsValidator::make(Component::_valid_construct(LarrockMenu::getConfig(), 'update', $id));
         View::share('validator', $validator);
-
         return view('larrock::admin.admin-builder.edit', $data);
     }
 
     /**
      * Update the specified resource in storage.
-     *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\RedirectResponse|Redirect
@@ -105,7 +100,6 @@ class AdminMenuController extends Controller
         }
 
         $data = LarrockMenu::getModel()->find($id);
-
         $data->fill($request->all());
         $data->active = $request->input('active', 1);
         $data->position = $request->input('position', 0);

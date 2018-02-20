@@ -21,6 +21,8 @@ use Larrock\Core\Component;
  * @property integer $active
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
+ * @property mixed $parent_tree
+ * @property mixed $get_parent
  * @method static \Illuminate\Database\Query\Builder|\Larrock\ComponentMenu\Models\Menu whereId($value)
  * @method static \Illuminate\Database\Query\Builder|\Larrock\ComponentMenu\Models\Menu whereTitle($value)
  * @method static \Illuminate\Database\Query\Builder|\Larrock\ComponentMenu\Models\Menu whereCategory($value)
@@ -48,7 +50,7 @@ class Menu extends Model
     {
         parent::__construct($attributes);
         $this->fillable(LarrockMenu::addFillableUserRows([]));
-        $this->table = LarrockMenu::getConfig()->table;
+        $this->table = LarrockMenu::getTable();
         $this->config = LarrockMenu::getConfig();
     }
 

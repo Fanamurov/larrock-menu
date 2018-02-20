@@ -2,6 +2,7 @@
 
 namespace Larrock\ComponentMenu;
 
+use Cache;
 use Larrock\ComponentMenu\Facades\LarrockMenu;
 use Larrock\ComponentMenu\Models\Menu;
 use Larrock\Core\Component;
@@ -43,7 +44,7 @@ class MenuComponent extends Component
 
     public function renderAdminMenu()
     {
-        $count = \Cache::remember('count-data-admin-'. LarrockMenu::getName(), 1440, function(){
+        $count = Cache::rememberForever('count-data-admin-'. LarrockMenu::getName(), function(){
             return LarrockMenu::getModel()->count(['id']);
         });
         return view('larrock::admin.sectionmenu.types.default', ['count' => $count, 'app' => LarrockMenu::getConfig(), 'url' => '/admin/'. LarrockMenu::getName()]);
