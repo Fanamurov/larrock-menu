@@ -16,7 +16,7 @@
         @endif
         @foreach($data as $key => $type)
             <p class="uk-h1" id="type-{{ $key }}">{{ $key }}</p>
-            <div class="uk-margin-large-bottom">
+            <div class="uk-margin-large-bottom ibox-content">
                 <table class="uk-table uk-table-striped uk-form">
                     <thead>
                     <tr>

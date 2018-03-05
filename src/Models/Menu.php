@@ -3,7 +3,7 @@
 namespace Larrock\ComponentMenu\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Larrock\ComponentMenu\Facades\LarrockMenu;
+use LarrockMenu;
 use Larrock\Core\Traits\GetLink;
 use Larrock\Core\Component;
 

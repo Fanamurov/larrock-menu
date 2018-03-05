@@ -2,7 +2,7 @@
 
 namespace Larrock\ComponentMenu\Middleware;
 
-use Larrock\ComponentMenu\Facades\LarrockMenu;
+use LarrockMenu;
 use Cache;
 use Closure;
 use View;

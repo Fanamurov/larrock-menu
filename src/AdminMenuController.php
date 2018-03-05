@@ -5,7 +5,7 @@ namespace Larrock\ComponentMenu;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use JsValidator;
-use Larrock\ComponentMenu\Facades\LarrockMenu;
+use LarrockMenu;
 use Larrock\Core\Component;
 use Larrock\Core\Helpers\FormBuilder\FormSelect;
 use Larrock\Core\Helpers\Tree;

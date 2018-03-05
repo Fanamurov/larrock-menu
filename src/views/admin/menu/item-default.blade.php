@@ -15,7 +15,7 @@
             @elseif(get_class($rows_name) === 'Larrock\Core\Helpers\FormBuilder\FormInput')
                 <td class="uk-hidden-small">
                     <input type="text" value="{{ $data->{$rows_name->name} }}" name="{{ $rows_name->name }}"
-                           class="ajax_edit_row form-control uk-form-width-medium" data-row_where="id" data-value_where="{{ $data->id }}"
+                           class="ajax_edit_row form-control uk-input uk-form-small" data-row_where="id" data-value_where="{{ $data->id }}"
                            data-table="{{ $app->table }}" style="max-width: 120px;">
                 </td>
             @endif
