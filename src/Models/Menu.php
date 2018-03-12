@@ -22,7 +22,8 @@ use Larrock\Core\Component;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property mixed $parent_tree
- * @property mixed $get_parent
+ * @property mixed $getParent
+ * @property mixed $getParentActive
  * @method static \Illuminate\Database\Query\Builder|\Larrock\ComponentMenu\Models\Menu whereId($value)
  * @method static \Illuminate\Database\Query\Builder|\Larrock\ComponentMenu\Models\Menu whereTitle($value)
  * @method static \Illuminate\Database\Query\Builder|\Larrock\ComponentMenu\Models\Menu whereCategory($value)
@@ -59,12 +60,12 @@ class Menu extends Model
         return $this->config;
     }
 
-    public function get_child()
+    public function getChild()
     {
         return $this->hasMany(LarrockMenu::getModelName(), 'parent', 'id')->orderBy('position', 'DESC');
     }
 
-    public function get_childActive()
+    public function getChildActive()
     {
         return $this->hasMany(LarrockMenu::getModelName(), 'parent', 'id')->whereActive(1)->orderBy('position', 'DESC');
     }
@@ -74,12 +75,12 @@ class Menu extends Model
         $key = 'tree_menu'. $this->id;
         $list = \Cache::remember($key, 1440, function() {
             $list[] = $this;
-            return $this->iterate_tree($this, $list);
+            return $this->iterateTree($this, $list);
         });
         return $list;
     }
 
-    protected function iterate_tree($category, $list = [])
+    protected function iterateTree($category, $list = [])
     {
         if($get_data = $category->get_parent()->first()){
             $list[] = $get_data;
@@ -88,12 +89,12 @@ class Menu extends Model
         return array_reverse($list);
     }
 
-    public function get_parent()
+    public function getParent()
     {
         return $this->hasOne(LarrockMenu::getModelName(), 'id', 'parent');
     }
 
-    public function get_parentActive()
+    public function getParentActive()
     {
         return $this->hasOne(LarrockMenu::getModelName(), 'id', 'parent')->whereActive(1);
     }

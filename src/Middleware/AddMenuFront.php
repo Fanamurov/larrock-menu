@@ -22,7 +22,7 @@ class AddMenuFront
             $menu = [];
             foreach ($get_types as $type){
                 $menu[$type->type] = LarrockMenu::getModel()->whereActive(1)->whereType($type->type)
-                    ->whereParent(NULL)->with(['get_childActive'])->orderBy('position', 'DESC')->get();
+                    ->whereParent(NULL)->with(['getChildActive'])->orderBy('position', 'DESC')->get();
             }
             return $menu;
         });
@@ -55,9 +55,9 @@ class AddMenuFront
                     $menu[$key_menu][$selected_key]->selected = TRUE;
 
                     //Выбираем активный пункт в выпадающем меню
-                    if($type[$selected_key]->get_childActive){
+                    if($type[$selected_key]->getChildActive){
                         $inter_child = [];
-                        foreach ($type[$selected_key]->get_childActive as $child_key => $child){
+                        foreach ($type[$selected_key]->getChildActive as $child_key => $child){
                             $parse_url_child = parse_url($child->url);
                             $explode_url_child = explode('/', array_get($parse_url_child, 'path'));
 
@@ -68,8 +68,8 @@ class AddMenuFront
 
                         if(\count($inter_child) > 0){
                             $selected_key_child = array_search(max($inter_child),$inter_child);
-                            if(array_key_exists($selected_key_child, $type[$selected_key]->get_childActive)) {
-                                $menu[$key_menu][$selected_key]->get_childActive[$selected_key_child]->selected = TRUE;
+                            if(array_key_exists($selected_key_child, $type[$selected_key]->getChildActive)) {
+                                $menu[$key_menu][$selected_key]->getChildActive[$selected_key_child]->selected = TRUE;
                             }
                         }
                     }

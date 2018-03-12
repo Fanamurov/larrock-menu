@@ -40,7 +40,7 @@ class AdminMenuController extends Controller
         $data['types_menu'] = LarrockMenu::getModel()->groupBy('type')->get(['type']);
         $data['data'] = [];
         foreach($data['types_menu'] as $type){
-            $data['data'][$type->type] = $tree->build_tree(LarrockMenu::getModel()->orderBy('position', 'DESC')->whereType($type->type)->get());
+            $data['data'][$type->type] = $tree->buildTree(LarrockMenu::getModel()->orderBy('position', 'DESC')->whereType($type->type)->get());
         }
         return view('larrock::admin.menu.index', $data);
     }
