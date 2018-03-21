@@ -36,7 +36,7 @@ class MenuComponent extends Component
             ->setDefaultValue('')->setCssClassGroup('uk-width-1-1 uk-width-1-3@m')->setFillable();
 
         $row = new FormInput('url', 'URL');
-        $this->rows['url'] = $row->setValid('max:255|required')->setFillable()->setInTableAdminAjaxEditable();
+        $this->rows['url'] = $row->setValid('max:255|required')->setFillable()->setInTableAdminEditable();
 
         return $this;
     }

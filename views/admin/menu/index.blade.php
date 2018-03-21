@@ -21,7 +21,7 @@
                     <thead>
                     <tr>
                         @foreach($app->rows as $rows_name)
-                            @if($rows_name->in_table_admin || $rows_name->in_table_admin_ajax_editable)
+                            @if($rows_name->inTableAdmin || $rows_name->inTableAdminEditable)
                                 <th style="width: 90px" @if($rows_name->name !== 'active') class="uk-hidden-small" @endif>{{ $rows_name->title }}</th>
                             @endif
                         @endforeach
