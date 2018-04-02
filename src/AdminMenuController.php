@@ -2,21 +2,21 @@
 
 namespace Larrock\ComponentMenu;
 
-use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use View;
+use Session;
+use Redirect;
+use Validator;
 use JsValidator;
 use LarrockMenu;
 use Larrock\Core\Component;
-use Larrock\Core\Helpers\FormBuilder\FormSelect;
+use Illuminate\Http\Request;
 use Larrock\Core\Helpers\Tree;
+use Illuminate\Routing\Controller;
+use Larrock\Core\Traits\ShareMethods;
+use Larrock\Core\Traits\AdminMethodsStore;
 use Larrock\Core\Traits\AdminMethodsCreate;
 use Larrock\Core\Traits\AdminMethodsDestroy;
-use Larrock\Core\Traits\AdminMethodsStore;
-use Larrock\Core\Traits\ShareMethods;
-use Session;
-use Validator;
-use Redirect;
-use View;
+use Larrock\Core\Helpers\FormBuilder\FormSelect;
 
 class AdminMenuController extends Controller
 {
@@ -39,9 +39,10 @@ class AdminMenuController extends Controller
         $tree = new Tree();
         $data['types_menu'] = LarrockMenu::getModel()->groupBy('type')->get(['type']);
         $data['data'] = [];
-        foreach($data['types_menu'] as $type){
+        foreach ($data['types_menu'] as $type) {
             $data['data'][$type->type] = $tree->buildTree(LarrockMenu::getModel()->orderBy('position', 'DESC')->whereType($type->type)->get());
         }
+
         return view('larrock::admin.menu.index', $data);
     }
 
@@ -57,17 +58,17 @@ class AdminMenuController extends Controller
         //Добавляем поле поиска материалов
         $data['search'] = [];
         $components = config('larrock-admin-search');
-        if(isset($components['components'])){
-            foreach ($components['components'] as $item){
-                if($item->searchable){
-                    if(isset($item->rows['active'])){
+        if (isset($components['components'])) {
+            foreach ($components['components'] as $item) {
+                if ($item->searchable) {
+                    if (isset($item->rows['active'])) {
                         $search_data = $item->model::whereActive(1)->get();
-                    }else{
+                    } else {
                         $search_data = $item->model::all();
                     }
-                    foreach ($search_data as $value){
-                        if($value->url && $value->title){
-                            $data['search'][$value->url] = $value->title .'/'. $item->model;
+                    foreach ($search_data as $value) {
+                        if ($value->url && $value->title) {
+                            $data['search'][$value->url] = $value->title.'/'.$item->model;
                         }
                     }
                 }
@@ -83,6 +84,7 @@ class AdminMenuController extends Controller
 
         $validator = JsValidator::make(Component::_valid_construct(LarrockMenu::getConfig(), 'update', $id));
         View::share('validator', $validator);
+
         return view('larrock::admin.admin-builder.edit', $data);
     }
 
@@ -95,7 +97,7 @@ class AdminMenuController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), Component::_valid_construct(LarrockMenu::getConfig(), 'update', $id));
-        if($validator->fails()){
+        if ($validator->fails()) {
             return back()->withInput($request->except('password'))->withErrors($validator);
         }
 
@@ -103,10 +105,10 @@ class AdminMenuController extends Controller
         $data->fill($request->all());
         $data->active = $request->input('active', 1);
         $data->position = $request->input('position', 0);
-        if($request->get('parent') === ''){
-            $data->parent = NULL;
+        if ($request->get('parent') === '') {
+            $data->parent = null;
         }
-        if($request->get('search_autocomplite_menu')){
+        if ($request->get('search_autocomplite_menu')) {
             $search = explode('/', $request->get('search_autocomplite_menu'));
             $model = new $search[1];
             $material = $model->whereTitle($search[0])->first();
@@ -114,12 +116,13 @@ class AdminMenuController extends Controller
             $data->url = $material->full_url;
         }
 
-        if($data->save()){
+        if ($data->save()) {
             \Cache::flush();
-            Session::push('message.success', 'Пункт меню '. $request->input('title') .' изменен');
-        }else{
-            Session::push('message.danger', 'Пункт меню '. $request->input('title') .' не изменен');
+            Session::push('message.success', 'Пункт меню '.$request->input('title').' изменен');
+        } else {
+            Session::push('message.danger', 'Пункт меню '.$request->input('title').' не изменен');
         }
+
         return back();
     }
 }

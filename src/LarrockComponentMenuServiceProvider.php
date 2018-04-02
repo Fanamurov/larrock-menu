@@ -19,7 +19,7 @@ class LarrockComponentMenuServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
         $this->publishes([
-            __DIR__.'/../views' => base_path('resources/views/vendor/larrock')
+            __DIR__.'/../views' => base_path('resources/views/vendor/larrock'),
         ]);
     }
 
@@ -30,8 +30,9 @@ class LarrockComponentMenuServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('larrockmenu', function() {
+        $this->app->singleton('larrockmenu', function () {
             $class = config('larrock.components.menu', MenuComponent::class);
+
             return new $class;
         });
 

@@ -13,5 +13,4 @@ class LarrockMenu extends Facade
     {
         return 'larrockmenu';
     }
-
 }
