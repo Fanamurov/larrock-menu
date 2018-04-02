@@ -24,19 +24,19 @@ class MenuComponent extends Component
     protected function addRows()
     {
         $row = new FormInput('title', 'Название пункта');
-        $this->rows['title'] = $row->setValid('max:255|required')->setTypo()->setInTableAdmin()->setFillable();
+        $this->setRow($row->setValid('max:255|required')->setTypo()->setInTableAdmin()->setFillable());
 
         $row = new FormSelect('type', 'Тип меню');
-        $this->rows['type'] = $row->setValid('required')->setAllowCreate()
+        $this->setRow($row->setValid('required')->setAllowCreate()
             ->setConnect($this->model, NULL, 'type')->setDefaultValue('default')
-            ->setCssClassGroup('uk-width-1-1 uk-width-1-3@m')->setFillable();
+            ->setCssClassGroup('uk-width-1-1 uk-width-1-3@m')->setFillable());
 
         $row = new FormSelectKey('parent', 'Родитель');
-        $this->rows['parent'] = $row->setConnect($this->model)->setOptionsTitle('title')->setOptionsKey('id')
-            ->setDefaultValue('')->setCssClassGroup('uk-width-1-1 uk-width-1-3@m')->setFillable();
+        $this->setRow($row->setConnect($this->model)->setOptionsTitle('title')->setOptionsKey('id')
+            ->setDefaultValue('')->setCssClassGroup('uk-width-1-1 uk-width-1-3@m')->setFillable());
 
         $row = new FormInput('url', 'URL');
-        $this->rows['url'] = $row->setValid('max:255|required')->setFillable()->setInTableAdminEditable();
+        $this->setRow($row->setValid('max:255|required')->setFillable()->setInTableAdminEditable());
 
         return $this;
     }
