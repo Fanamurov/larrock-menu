@@ -4,8 +4,8 @@ namespace Larrock\ComponentMenu;
 
 use Cache;
 use LarrockMenu;
-use Larrock\ComponentMenu\Models\Menu;
 use Larrock\Core\Component;
+use Larrock\ComponentMenu\Models\Menu;
 use Larrock\Core\Helpers\FormBuilder\FormInput;
 use Larrock\Core\Helpers\FormBuilder\FormSelect;
 use Larrock\Core\Helpers\FormBuilder\FormSelectKey;
@@ -28,7 +28,7 @@ class MenuComponent extends Component
 
         $row = new FormSelect('type', 'Тип меню');
         $this->setRow($row->setValid('required')->setAllowCreate()
-            ->setConnect($this->model, NULL, 'type')->setDefaultValue('default')
+            ->setConnect($this->model, null, 'type')->setDefaultValue('default')
             ->setCssClassGroup('uk-width-1-1 uk-width-1-3@m')->setFillable());
 
         $row = new FormSelectKey('parent', 'Родитель');
@@ -43,10 +43,11 @@ class MenuComponent extends Component
 
     public function renderAdminMenu()
     {
-        $count = Cache::rememberForever('count-data-admin-'. LarrockMenu::getName(), function(){
+        $count = Cache::rememberForever('count-data-admin-'.LarrockMenu::getName(), function () {
             return LarrockMenu::getModel()->count(['id']);
         });
+
         return view('larrock::admin.sectionmenu.types.default', ['count' => $count, 'app' => LarrockMenu::getConfig(),
-            'url' => '/admin/'. LarrockMenu::getName()]);
+            'url' => '/admin/'.LarrockMenu::getName(), ]);
     }
 }

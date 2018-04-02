@@ -2,23 +2,23 @@
 
 namespace Larrock\ComponentMenu\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use LarrockMenu;
-use Larrock\Core\Traits\GetLink;
 use Larrock\Core\Component;
+use Larrock\Core\Traits\GetLink;
+use Illuminate\Database\Eloquent\Model;
 
 /**
- * Larrock\ComponentMenu\Models\Menu
+ * Larrock\ComponentMenu\Models\Menu.
  *
- * @property integer $id
+ * @property int $id
  * @property string $title
- * @property integer $category
+ * @property int $category
  * @property string $type
- * @property integer $parent
+ * @property int $parent
  * @property string $url
  * @property string $connect
- * @property integer $position
- * @property integer $active
+ * @property int $position
+ * @property int $active
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property mixed $parent_tree
@@ -41,10 +41,10 @@ use Larrock\Core\Component;
 class Menu extends Model
 {
     /**
-     * @var $this Component
+     * @var Component
      */
     protected $config;
-    
+
     use GetLink;
 
     public function __construct(array $attributes = [])
@@ -72,20 +72,24 @@ class Menu extends Model
 
     public function getParentTreeAttribute()
     {
-        $key = 'tree_menu'. $this->id;
-        $list = \Cache::remember($key, 1440, function() {
+        $key = 'tree_menu'.$this->id;
+        $list = \Cache::remember($key, 1440, function () {
             $list[] = $this;
+
             return $this->iterateTree($this, $list);
         });
+
         return $list;
     }
 
     protected function iterateTree($category, $list = [])
     {
-        if($get_data = $category->get_parent()->first()){
+        if ($get_data = $category->get_parent()->first()) {
             $list[] = $get_data;
+
             return $this->iterate_tree($get_data, $list);
         }
+
         return array_reverse($list);
     }
 
