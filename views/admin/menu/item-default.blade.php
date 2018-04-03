@@ -2,7 +2,7 @@
     @foreach($app->rows as $rows_name)
         @if($rows_name->inTableAdminEditable)
             @if($rows_name instanceof \Larrock\Core\Helpers\FormBuilder\FormCheckbox)
-                <td class="row-active @if($rows_name->name !== 'active') uk-hidden-small @endif">
+                <td class="row-active @if($rows_name->name !== 'active') uk-visible@s @endif">
                     <div class="uk-button-group btn-group_switch_ajax" role="group" style="width: 100px">
                         <button type="button" class="uk-button uk-button-primary uk-button-small @if($data->{$rows_name->name} === 0) uk-button-outline @endif"
                                 data-row_where="id" data-value_where="{{ $data->id }}" data-table="{{ $app->table }}"
@@ -15,8 +15,8 @@
             @elseif($rows_name instanceof \Larrock\Core\Helpers\FormBuilder\FormInput)
                 <td class="uk-hidden-small">
                     <input type="text" value="{{ $data->{$rows_name->name} }}" name="{{ $rows_name->name }}"
-                           class="ajax_edit_row form-control uk-input uk-form-small" data-row_where="id" data-value_where="{{ $data->id }}"
-                           data-table="{{ $app->table }}" style="max-width: 120px;">
+                           class="ajax_edit_row form-control uk-input uk-form-small @if($rows_name->name !== 'active') uk-visible@s @endif"
+                           data-row_where="id" data-value_where="{{ $data->id }}" data-table="{{ $app->table }}" style="max-width: 120px;">
                 </td>
             @endif
         @endif

@@ -22,7 +22,7 @@
                     <tr>
                         @foreach($app->rows as $rows_name)
                             @if($rows_name->inTableAdmin || $rows_name->inTableAdminEditable)
-                                <th style="width: 90px" @if($rows_name->name !== 'active') class="uk-hidden-small" @endif>{{ $rows_name->title }}</th>
+                                <th style="width: 90px" @if($rows_name->name !== 'active') class="uk-visible@s" @endif>{{ $rows_name->title }}</th>
                             @endif
                         @endforeach
                         @include('larrock::admin.admin-builder.additional-rows-th')
