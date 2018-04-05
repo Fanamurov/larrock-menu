@@ -8,7 +8,6 @@ use Redirect;
 use Validator;
 use JsValidator;
 use LarrockMenu;
-use Larrock\Core\Component;
 use Illuminate\Http\Request;
 use Larrock\Core\Helpers\Tree;
 use Illuminate\Routing\Controller;
@@ -16,6 +15,7 @@ use Larrock\Core\Traits\ShareMethods;
 use Larrock\Core\Traits\AdminMethodsStore;
 use Larrock\Core\Traits\AdminMethodsCreate;
 use Larrock\Core\Traits\AdminMethodsDestroy;
+use Larrock\Core\Events\ComponentItemUpdated;
 use Larrock\Core\Helpers\FormBuilder\FormSelect;
 
 class AdminMenuController extends Controller
@@ -82,7 +82,7 @@ class AdminMenuController extends Controller
 
         $data['app'] = LarrockMenu::overrideComponent('rows', $rows)->tabbable($data['data']);
 
-        $validator = JsValidator::make(Component::_valid_construct(LarrockMenu::getConfig(), 'update', $id));
+        $validator = JsValidator::make($this->config->getValid($id));
         View::share('validator', $validator);
 
         return view('larrock::admin.admin-builder.edit', $data);
@@ -96,11 +96,6 @@ class AdminMenuController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), Component::_valid_construct(LarrockMenu::getConfig(), 'update', $id));
-        if ($validator->fails()) {
-            return back()->withInput($request->except('password'))->withErrors($validator);
-        }
-
         $data = LarrockMenu::getModel()->find($id);
         $data->fill($request->all());
         $data->active = $request->input('active', 1);
@@ -116,7 +111,13 @@ class AdminMenuController extends Controller
             $data->url = $material->full_url;
         }
 
+        $validator = Validator::make($data->toArray(), $this->config->getValid($id));
+        if ($validator->fails()) {
+            return back()->withInput($request->except('password'))->withErrors($validator);
+        }
+
         if ($data->save()) {
+            event(new ComponentItemUpdated($this->config, $data, $request));
             \Cache::flush();
             Session::push('message.success', 'Пункт меню '.$request->input('title').' изменен');
         } else {
