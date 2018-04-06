@@ -1,12 +1,12 @@
 @extends('larrock::admin.main')
-@section('title') {{ $app->name }} admin @endsection
+@section('title') {{ $package->name }} admin @endsection
 
 @section('content')
     <div class="uk-margin-large-bottom container-head">
-        {!! Breadcrumbs::render('admin.'. $app->name .'.index') !!}
-        <p>{{ $app->description }}</p>
+        {!! Breadcrumbs::render('admin.'. $package->name .'.index') !!}
+        <p>{{ $package->description }}</p>
         <div class="add-panel">
-            <a class="uk-button uk-button-primary uk-float-right" href="/admin/{{ $app->name }}/create">Добавить пункт меню</a>
+            <a class="uk-button uk-button-primary uk-float-right" href="/admin/{{ $package->name }}/create">Добавить пункт меню</a>
         </div>
     </div>
 
@@ -20,7 +20,7 @@
                 <table class="uk-table uk-table-striped uk-form">
                     <thead>
                     <tr>
-                        @foreach($app->rows as $rows_name)
+                        @foreach($package->rows as $rows_name)
                             @if($rows_name->inTableAdmin || $rows_name->inTableAdminEditable)
                                 <th style="width: 90px" @if($rows_name->name !== 'active') class="uk-visible@s" @endif>{{ $rows_name->title }}</th>
                             @endif
